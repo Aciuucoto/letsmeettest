@@ -2,9 +2,9 @@
   "name": "letsmeet",
   "version": "1.0.0",
   "description": "Let's Meet - A social event planning platform",
-  "main": "backend/server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node index.js",
     "server": "nodemon backend/server.js",
     "client": "cd frontend && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",

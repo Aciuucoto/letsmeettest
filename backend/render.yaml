@@ -3,7 +3,7 @@ services:
     name: letsmeet-backend
     env: node
     buildCommand: npm install
-    startCommand: node backend/server.js
+    startCommand: node index.js
     envVars:
       - key: NODE_ENV
         value: production
