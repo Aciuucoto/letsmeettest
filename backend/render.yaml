@@ -3,13 +3,15 @@ services:
     name: letsmeet-backend
     env: node
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node backend/server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
         sync: false
-      - key: GOOGLE_MAPS_API_KEY
+      - key: JWT_SECRET
         sync: false
-    healthCheckPath: /api/health
+      - key: PORT
+        value: 5001
+    healthCheckPath: /api/socket
     autoDeploy: true 
