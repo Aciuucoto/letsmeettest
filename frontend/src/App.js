@@ -13,7 +13,7 @@ import NotFound from './components/pages/NotFound';
 import Login from './components/auth/Login';
 
 // Services
-import { getUser } from './services/userService';
+import userService from './services/userService';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -68,7 +68,7 @@ function App() {
       const userId = localStorage.getItem('userId');
       if (userId) {
         try {
-          const userData = await getUser(userId);
+          const userData = await userService.getUser(userId);
           setUser(userData);
           
           // Join the user's socket room
