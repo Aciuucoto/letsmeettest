@@ -1,70 +1,77 @@
 import axios from 'axios';
-import config from '../config';
 
-const API_URL = config.apiUrl;
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 const userService = {
   // Register a new user
   register: async (userData) => {
-    try {
-      const response = await axios.post(`${API_URL}/api/users/register`, userData);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
+    const response = await axios.post(`${API_URL}/users/register`, userData);
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
     }
+    return response.data;
   },
 
   // Login user
   login: async (credentials) => {
-    try {
-      const response = await axios.post(`${API_URL}/api/users/login`, credentials);
-      if (response.data.token) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-      }
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
+    const response = await axios.post(`${API_URL}/users/login`, credentials);
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
     }
+    return response.data;
   },
 
   // Logout user
   logout: () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('token');
   },
 
-  // Get current user
-  getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  // Get current user profile
+  getProfile: async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_URL}/users/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   },
 
   // Update user profile
   updateProfile: async (userData) => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const response = await axios.put(
-        `${API_URL}/api/users/profile`,
-        userData,
-        {
-          headers: { Authorization: `Bearer ${user.token}` }
-        }
-      );
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
+    const token = localStorage.getItem('token');
+    const response = await axios.put(`${API_URL}/users/profile`, userData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
   },
 
-  // Get user profile
-  getProfile: async () => {
+  // Get user by ID
+  getUser: async (userId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_URL}/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  // Get current user
+  getCurrentUser: () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return JSON.parse(atob(token.split('.')[1]));
+    }
+    return null;
+  },
+
+  // Check if user is authenticated
+  isAuthenticated: () => {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const response = await axios.get(`${API_URL}/api/users/profile`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-      return response.data;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp > Date.now() / 1000;
     } catch (error) {
-      throw error.response?.data || error.message;
+      return false;
     }
   }
 };
