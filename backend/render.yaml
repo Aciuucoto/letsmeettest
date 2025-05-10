@@ -2,7 +2,9 @@ services:
   - type: web
     name: letsmeet-backend
     env: node
-    buildCommand: npm install
+    buildCommand: |
+      npm install
+      cd frontend && npm install && npm run build
     startCommand: node index.js
     envVars:
       - key: NODE_ENV
