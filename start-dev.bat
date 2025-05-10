@@ -1,0 +1,3 @@
+@echo off
+echo Starting LetsMeet in development mode...
+npm run dev 
