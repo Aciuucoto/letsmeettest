@@ -4,7 +4,9 @@ services:
     env: node
     buildCommand: |
       npm install
-      cd frontend && npm install && npm run build
+      cd frontend && npm install
+      cd frontend && npm run build
+      cd .. && mkdir -p public && cp -r frontend/build/* public/
     startCommand: node index.js
     envVars:
       - key: NODE_ENV
